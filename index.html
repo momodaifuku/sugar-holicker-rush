@@ -1,0 +1,526 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>シュガーホリッカー・ラッシュ</title>
+    <style>
+        /* 1. リセットと基本設定 */
+        * {
+            box-sizing: border-box;
+            user-select: none;
+            -webkit-user-select: none;
+            -webkit-touch-callout: none;
+        }
+        body, html {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden; /* スクロール防止 */
+            background-color: #ffb7c5; /* さくらピンク */
+            font-family: 'Hiragino Rounded W8 ProN', 'Hiragino Maru Gothic ProN', 'Meiryo', 'Nunito', sans-serif;
+            touch-action: none; /* ピンチズームやダブルタップズームを防止 */
+        }
+
+        /* 2. ゲームコンテナ */
+        #game-container {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle at center, #fff0f5 0%, #ffb7c5 100%);
+            overflow: hidden;
+        }
+
+        /* 3. 画面の共通スタイル */
+        .screen {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: 10;
+            background-color: rgba(255, 183, 197, 0.85); /* 半透明のさくらピンク */
+            backdrop-filter: blur(5px);
+            transition: opacity 0.3s;
+        }
+        .hidden {
+            display: none !important;
+        }
+
+        /* 4. タイポグラフィとUI要素 */
+        h1 {
+            color: #ff4081; /* アクセントピンク */
+            text-shadow: 3px 3px 0 #fff, -1px -1px 0 #fff, 1px -1px 0 #fff, -1px 1px 0 #fff, 1px 1px 0 #fff;
+            text-align: center;
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            padding: 0 10px;
+            line-height: 1.2;
+        }
+        .subtitle {
+            font-size: 1.2rem;
+            color: #ff4081;
+            background: #fff;
+            padding: 5px 15px;
+            border-radius: 20px;
+            margin-bottom: 20px;
+            font-weight: bold;
+            box-shadow: 0 2px 5px rgba(255,64,129,0.3);
+        }
+        p.instructions {
+            color: #ff4081;
+            font-weight: bold;
+            background: #ffffff;
+            padding: 15px 20px;
+            border-radius: 20px;
+            text-align: center;
+            line-height: 1.8;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+            border: 2px dashed #ffb7c5;
+            margin-bottom: 30px;
+            font-size: 1.1rem;
+        }
+        h2 {
+            color: #ff4081;
+            text-shadow: 2px 2px 0 #fff;
+            font-size: 2rem;
+            margin: 10px 0;
+        }
+        h3#title-display {
+            color: #fff;
+            background: #ff4081;
+            padding: 10px 25px;
+            border-radius: 30px;
+            font-size: 1.5rem;
+            margin-bottom: 30px;
+            border: 3px solid #fff;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+        }
+
+        .btn {
+            background-color: #ff4081;
+            color: white;
+            padding: 15px 40px;
+            font-size: 1.5rem;
+            font-weight: bold;
+            border: 4px solid white;
+            border-radius: 50px;
+            box-shadow: 0 6px 0 #c2185b, 0 8px 15px rgba(0,0,0,0.2);
+            cursor: pointer;
+            transition: all 0.1s;
+            text-align: center;
+            letter-spacing: 2px;
+        }
+        .btn:active {
+            transform: translateY(6px);
+            box-shadow: 0 0px 0 #c2185b, 0 2px 5px rgba(0,0,0,0.2);
+        }
+
+        /* 5. ゲーム内UI */
+        #score-display {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            font-size: 1.8rem;
+            font-weight: bold;
+            color: #ff4081;
+            background: white;
+            padding: 10px 20px;
+            border-radius: 30px;
+            border: 3px solid #ff4081;
+            z-index: 5;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+
+        /* 6. 動的オブジェクト (角砂糖とケーキ) */
+        .gameObject {
+            position: absolute;
+            font-size: 3.5rem; /* スマホでもタップしやすい大きさ */
+            cursor: pointer;
+            transform: translate(-50%, -50%); /* 中心座標を基準にする */
+            filter: drop-shadow(0 4px 4px rgba(0,0,0,0.2));
+            z-index: 4;
+            /* タップ領域を少し広げるためのハック */
+            padding: 10px;
+        }
+
+        /* 7. タップ時のポップアップテキスト */
+        .floatingText {
+            position: absolute;
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #ff4081;
+            text-shadow: 2px 2px 0 #fff, -1px -1px 0 #fff, 1px -1px 0 #fff, -1px 1px 0 #fff;
+            pointer-events: none;
+            z-index: 6;
+            transform: translate(-50%, -50%);
+            animation: floatUp 0.8s ease-out forwards;
+        }
+        @keyframes floatUp {
+            0% { transform: translate(-50%, -50%) scale(0.5); opacity: 1; }
+            50% { transform: translate(-50%, -100px) scale(1.2); opacity: 1; }
+            100% { transform: translate(-50%, -150px) scale(1); opacity: 0; }
+        }
+
+        /* 8. 特別演出: 79Pt達成のメッセージ */
+        #special-message {
+            position: absolute;
+            top: 30%;
+            left: 0;
+            width: 100%;
+            text-align: center;
+            font-size: 2.5rem;
+            color: #ff4081;
+            text-shadow: 3px 3px 0 #fff, -3px -3px 0 #fff, 3px -3px 0 #fff, -3px 3px 0 #fff;
+            z-index: 100;
+            pointer-events: none;
+            font-weight: bold;
+            line-height: 1.4;
+            animation: popInBounce 1s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards, floatPulsate 2s infinite 1s;
+        }
+        @keyframes popInBounce {
+            0% { transform: scale(0) rotate(-10deg); opacity: 0; }
+            80% { transform: scale(1.1) rotate(5deg); opacity: 1; }
+            100% { transform: scale(1) rotate(0); opacity: 1; }
+        }
+        @keyframes floatPulsate {
+            0% { transform: scale(1) translateY(0); }
+            50% { transform: scale(1.05) translateY(-10px); }
+            100% { transform: scale(1) translateY(0); }
+        }
+
+        /* 9. 紙吹雪 */
+        .confetti {
+            position: absolute;
+            top: -20px;
+            width: 12px;
+            height: 12px;
+            background-color: #ff4081;
+            pointer-events: none;
+            z-index: 50;
+            animation: fall linear forwards;
+        }
+        @keyframes fall {
+            to { transform: translateY(120vh) rotate(720deg); }
+        }
+    </style>
+</head>
+<body>
+    <div id="game-container">
+        <!-- プレイ中のスコア表示 -->
+        <div id="score-display" class="hidden">Sugar Pt: <span id="score">0</span></div>
+        
+        <!-- スタート画面 -->
+        <div id="start-screen" class="screen">
+            <h1>シュガーホリッカー<br>ラッシュ</h1>
+            <div class="subtitle">〜佐藤莉華 生誕祭〜</div>
+            <p class="instructions">
+                🧊 をタップしてスコアを稼ごう！<br>
+                画面外に逃がすとゲームオーバー！<br>
+                🍰 はボーナス！逃してもセーフ！
+            </p>
+            <div class="btn" id="start-btn">スタート！</div>
+        </div>
+
+        <!-- ゲームオーバー画面 -->
+        <div id="game-over-screen" class="screen hidden">
+            <h1>ゲームオーバー</h1>
+            <h2>累計 Sugar Pt: <span id="final-score">0</span></h2>
+            <h3 id="title-display"></h3>
+            <div class="btn" id="retry-btn">もう一度遊ぶ</div>
+        </div>
+    </div>
+
+    <script>
+        // --- 状態管理変数 ---
+        let score = 0;
+        let isPlaying = false;
+        let gameLoopId;
+        let spawnTimeoutId;
+        let objects = [];
+        let hasSeen79Effect = false;
+        
+        // --- 難易度パラメータ ---
+        let baseSpawnRate = 1200; // 初期出現間隔 (ms)
+        let baseSpeed = 2;        // 初期移動速度
+
+        // --- DOM要素の取得 ---
+        const container = document.getElementById('game-container');
+        const scoreDisplay = document.getElementById('score-display');
+        const scoreEl = document.getElementById('score');
+        const startScreen = document.getElementById('start-screen');
+        const gameOverScreen = document.getElementById('game-over-screen');
+        const finalScoreEl = document.getElementById('final-score');
+        const titleDisplay = document.getElementById('title-display');
+
+        // --- ウィンドウサイズ管理 ---
+        let screenW = window.innerWidth;
+        let screenH = window.innerHeight;
+        window.addEventListener('resize', () => {
+            screenW = window.innerWidth;
+            screenH = window.innerHeight;
+        });
+
+        // --- イベントリスナー設定 ---
+        // pointerdownを使って、タッチとマウス両方に対応
+        document.getElementById('start-btn').addEventListener('pointerdown', startGame);
+        document.getElementById('retry-btn').addEventListener('pointerdown', startGame);
+
+        // コンテナ上のデフォルトスクロール等をキャンセル
+        container.addEventListener('touchmove', (e) => e.preventDefault(), { passive: false });
+
+        // --- ゲーム開始処理 ---
+        function startGame(e) {
+            if (e) {
+                e.preventDefault();
+                e.stopPropagation();
+            }
+            
+            // 画面の切り替え
+            startScreen.classList.add('hidden');
+            gameOverScreen.classList.add('hidden');
+            scoreDisplay.classList.remove('hidden');
+            
+            // 既存のオブジェクトやエフェクトを全てクリア
+            document.querySelectorAll('.gameObject, .floatingText, .confetti, #special-message').forEach(el => el.remove());
+            
+            // 変数の初期化
+            score = 0;
+            scoreEl.innerText = score;
+            isPlaying = true;
+            hasSeen79Effect = false;
+            objects = [];
+            
+            // ループ開始
+            lastTime = performance.now();
+            gameLoopId = requestAnimationFrame(gameLoop);
+            scheduleSpawn();
+        }
+
+        // --- メインゲームループ ---
+        let lastTime = 0;
+        function gameLoop(time) {
+            if (!isPlaying) return;
+            
+            // const dt = time - lastTime; // （今回は経過時間厳密なデルタ計算ではなく、フレームベースの簡易物理）
+            lastTime = time;
+
+            // オブジェクトの移動処理
+            for (let i = objects.length - 1; i >= 0; i--) {
+                const obj = objects[i];
+                obj.x += obj.vx;
+                obj.y += obj.vy;
+                
+                // DOMへの反映
+                obj.el.style.left = obj.x + 'px';
+                obj.el.style.top = obj.y + 'px';
+
+                // 画面外判定
+                const margin = 80; // 完全に画面外に出るまでのマージン
+                if (
+                    obj.x < -margin || obj.x > screenW + margin ||
+                    obj.y < -margin || obj.y > screenH + margin
+                ) {
+                    if (obj.type === 'sugar') {
+                        // 角砂糖を逃がしたらゲームオーバー
+                        gameOver();
+                        return; // ループを中断
+                    } else {
+                        // ケーキ（ボーナス）は逃がしてもセーフ。配列とDOMから削除するだけ
+                        obj.el.remove();
+                        objects.splice(i, 1);
+                    }
+                }
+            }
+
+            // 79Pt到達時の特別演出チェック
+            if (score >= 79 && !hasSeen79Effect) {
+                trigger79Effect();
+            }
+
+            // 次のフレームを要求
+            gameLoopId = requestAnimationFrame(gameLoop);
+        }
+
+        // --- 出現スケジューリング ---
+        function scheduleSpawn() {
+            if (!isPlaying) return;
+            spawnObject();
+            
+            // スコアに応じて出現間隔を短くする（難易度上昇）
+            // 最小間隔は400msに制限
+            let currentSpawnRate = Math.max(400, baseSpawnRate - (score * 12));
+            
+            spawnTimeoutId = setTimeout(scheduleSpawn, currentSpawnRate);
+        }
+
+        // --- オブジェクトの生成 ---
+        function spawnObject() {
+            // 20%の確率でケーキ、80%で角砂糖
+            const isCake = Math.random() < 0.2;
+            const type = isCake ? 'cake' : 'sugar';
+            
+            const el = document.createElement('div');
+            el.className = 'gameObject';
+            el.innerText = isCake ? '🍰' : '🧊';
+            
+            // タップ（クリック）イベント
+            el.addEventListener('pointerdown', (e) => {
+                if (!isPlaying) return;
+                e.preventDefault();
+                e.stopPropagation();
+                hitObject(obj, e.clientX, e.clientY);
+            });
+
+            container.appendChild(el);
+
+            // 発生する辺をランダムに決定 (0:上, 1:右, 2:下, 3:左)
+            const edge = Math.floor(Math.random() * 4);
+            let x, y, angle;
+            const spawnMargin = 60; // 画面外の初期位置
+            
+            if (edge === 0) { // 上から
+                x = Math.random() * screenW;
+                y = -spawnMargin;
+                // 下方向（30度〜150度）
+                angle = (Math.random() * 120 + 30) * Math.PI / 180;
+            } else if (edge === 1) { // 右から
+                x = screenW + spawnMargin;
+                y = Math.random() * screenH;
+                // 左方向（120度〜240度）
+                angle = (Math.random() * 120 + 120) * Math.PI / 180;
+            } else if (edge === 2) { // 下から
+                x = Math.random() * screenW;
+                y = screenH + spawnMargin;
+                // 上方向（210度〜330度）
+                angle = (Math.random() * 120 + 210) * Math.PI / 180;
+            } else { // 左から
+                x = -spawnMargin;
+                y = Math.random() * screenH;
+                // 右方向（-30度〜90度）
+                angle = (Math.random() * 120 - 30) * Math.PI / 180;
+            }
+
+            // スコアに応じて速度を上げる
+            let currentSpeed = baseSpeed + (score * 0.04);
+            // 速度に多少のばらつきを持たせる (0.8倍〜1.2倍)
+            currentSpeed *= (0.8 + Math.random() * 0.4);
+
+            const obj = {
+                el: el,
+                type: type,
+                x: x,
+                y: y,
+                vx: Math.cos(angle) * currentSpeed,
+                vy: Math.sin(angle) * currentSpeed
+            };
+
+            // 初期位置の適用
+            el.style.left = x + 'px';
+            el.style.top = y + 'px';
+            
+            objects.push(obj);
+        }
+
+        // --- タップ成功時の処理 ---
+        function hitObject(obj, tapX, tapY) {
+            // 配列とDOMから削除
+            const index = objects.indexOf(obj);
+            if (index > -1) objects.splice(index, 1);
+            obj.el.remove();
+
+            // スコア加算
+            const pts = obj.type === 'cake' ? 5 : 1;
+            score += pts;
+            scoreEl.innerText = score;
+
+            // ポップアップテキスト演出
+            const sugarTexts = ["+1 Sugar!", "莉華ちゃん命！", "おめでとう！", "かわいい！"];
+            const cakeTexts = ["+5 ボーナス！", "Happy Birthday!"];
+            
+            const textPool = obj.type === 'cake' ? cakeTexts : sugarTexts;
+            const textMsg = textPool[Math.floor(Math.random() * textPool.length)];
+            
+            const floating = document.createElement('div');
+            floating.className = 'floatingText';
+            floating.innerText = textMsg;
+            floating.style.left = tapX + 'px';
+            floating.style.top = tapY + 'px';
+            container.appendChild(floating);
+            
+            // アニメーション完了後に削除
+            setTimeout(() => { floating.remove(); }, 800);
+        }
+
+        // --- ゲームオーバー処理 ---
+        function gameOver() {
+            isPlaying = false;
+            cancelAnimationFrame(gameLoopId);
+            clearTimeout(spawnTimeoutId);
+            
+            // 残っているオブジェクトの動きを止め、半透明にする
+            objects.forEach(obj => {
+                obj.el.style.pointerEvents = 'none';
+                obj.el.style.opacity = '0.5';
+                obj.el.style.transition = 'opacity 0.5s';
+            });
+
+            // 少し間を置いてからゲームオーバー画面を表示
+            setTimeout(() => {
+                gameOverScreen.classList.remove('hidden');
+                scoreDisplay.classList.add('hidden');
+                finalScoreEl.innerText = score;
+                
+                // 称号の判定
+                let title = "";
+                if (score <= 10) title = "微糖ホリッカー";
+                else if (score <= 30) title = "中辛ホリッカー";
+                else if (score <= 50) title = "本格シュガーホリッカー";
+                else if (score <= 78) title = "重度佐藤中毒";
+                else title = "極限の佐藤中毒（神ホリッカー）";
+                
+                titleDisplay.innerText = "称号: " + title;
+                
+                // 79Pt以上の場合はゲームオーバー画面でも特別演出を発動
+                if (score >= 79 && !hasSeen79Effect) {
+                    trigger79Effect();
+                }
+            }, 800);
+        }
+
+        // --- 79Pt到達時の特別演出 (誕生日) ---
+        function trigger79Effect() {
+            hasSeen79Effect = true;
+            
+            // 祝福メッセージの表示
+            const msg = document.createElement('div');
+            msg.id = 'special-message';
+            msg.innerHTML = "🎉 Happy Birthday<br>莉華ちゃん！ 🎉";
+            container.appendChild(msg);
+            
+            // 紙吹雪の生成
+            const colors = ['#ff4081', '#ffb7c5', '#ffffff', '#ffd700', '#ff69b4', '#87cefa'];
+            for(let i=0; i < 120; i++) {
+                const conf = document.createElement('div');
+                conf.className = 'confetti';
+                conf.style.left = Math.random() * 100 + 'vw';
+                conf.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+                
+                // 丸か四角かランダム
+                if (Math.random() > 0.5) conf.style.borderRadius = '50%';
+                
+                // 落下速度と開始タイミングをランダムに
+                conf.style.animationDuration = (Math.random() * 3 + 2.5) + 's';
+                conf.style.animationDelay = (Math.random() * 1.5) + 's';
+                
+                container.appendChild(conf);
+            }
+        }
+    </script>
+</body>
+</html>
