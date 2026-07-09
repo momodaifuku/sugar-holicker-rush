@@ -532,6 +532,7 @@
             <h2>累計 Sugar Pt: <span id="final-score">0</span></h2>
             <h3 id="title-display"></h3>
             <div class="btn" id="retry-btn">もう一度遊ぶ</div>
+            <div class="btn" id="home-btn" style="margin-top: 15px; background-color: #4fc3f7; box-shadow: 0 8px 0 #0288d1, 0 10px 15px rgba(0,0,0,0.3);">🏠 タイトルへ戻る</div>
         </div>
         </div>
     </div>
@@ -627,6 +628,21 @@
         });
 
         document.getElementById('retry-btn').addEventListener('pointerdown', startGame);
+
+        document.getElementById('home-btn').addEventListener('pointerdown', (e) => {
+            if (e) {
+                e.preventDefault();
+                e.stopPropagation();
+            }
+            gameOverScreen.classList.add('hidden');
+            startScreen.classList.remove('hidden');
+            container.classList.remove('birthday-mode');
+            
+            document.querySelectorAll('.gameObject, .tapParticle, .confetti, #special-message, .birthday-banner, .dim-overlay').forEach(el => el.remove());
+            
+            score = 0;
+            scoreEl.innerText = score;
+        });
 
         // コンテナ上のデフォルトスクロール等をキャンセル
         container.addEventListener('touchmove', (e) => e.preventDefault(), { passive: false });
