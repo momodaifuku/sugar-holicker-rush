@@ -63,8 +63,9 @@
             content: "";
             position: absolute;
             top: 0; left: 0; right: 0; bottom: 0;
-            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120' viewBox='0 0 120 120'%3E%3Ctext x='10' y='30' font-size='20'%3E🎂%3C/text%3E%3Ctext x='60' y='20' font-size='15'%3E🎊%3C/text%3E%3Ctext x='30' y='80' font-size='20'%3E⬜️%3C/text%3E%3Ctext x='80' y='70' font-size='20'%3E🎉%3C/text%3E%3Ctext x='50' y='50' font-size='15'%3E🎈%3C/text%3E%3Ccircle cx='20' cy='60' r='3' fill='%23ff69b4'/%3E%3Ccircle cx='70' cy='40' r='2' fill='%23ffd700'/%3E%3Ccircle cx='90' cy='90' r='4' fill='%2387cefa'/%3E%3C/svg%3E");
-            opacity: 0.15;
+            background-image: url("assets/bg_pattern.png");
+            background-size: 200px;
+            opacity: 0.6;
             pointer-events: none;
             z-index: 0;
         }
@@ -119,17 +120,14 @@
             position: relative;
             z-index: 2;
         }
-        .balloon-arch {
+        .balloon-arch-img {
             position: absolute;
-            top: 15px;
-            font-size: 2.5rem;
-            letter-spacing: -3px;
-            text-shadow: 0 4px 10px rgba(0,0,0,0.3);
-            display: flex;
-            justify-content: center;
+            top: -20px;
             width: 100%;
+            max-width: 450px;
             pointer-events: none;
             z-index: 1;
+            mix-blend-mode: multiply;
         }
         .subtitle {
             position: relative;
@@ -145,12 +143,18 @@
             z-index: 2;
         }
         .subtitle::before {
-            content: "🎀";
+            content: "";
+            background-image: url('assets/ribbon.png');
+            background-size: contain;
+            background-repeat: no-repeat;
+            background-position: center;
+            width: 50px;
+            height: 40px;
             position: absolute;
-            top: -18px;
+            top: -25px;
             left: 50%;
             transform: translateX(-50%);
-            font-size: 1.8rem;
+            mix-blend-mode: multiply;
         }
         p.instructions {
             color: #ff4081;
@@ -473,18 +477,19 @@
         <div id="game-container">
         <!-- スタート画面 -->
         <div id="start-screen" class="screen">
-            <div class="balloon-arch">🎈🎈🎈🎈🎈🎈🎈</div>
-            <div class="english-title">🎉 HAPPY BIRTHDAY RIKA-CHAN! 🎉</div>
+            <img src="assets/balloons.png" class="balloon-arch-img" alt="Balloons">
+            <div class="english-title">HAPPY BIRTHDAY RIKA-CHAN!</div>
             <h1>シュガークリッカー<br>ラッシュ</h1>
             <div class="subtitle">〜佐藤莉華 生誕祭〜</div>
-            <div class="btn" id="start-btn" style="margin-top: 25px;">
-                <span style="font-size: 1.2rem;">🎉</span><br>スタート！
+            <div class="btn" id="start-btn" style="margin-top: 35px;">
+                <img src="assets/cracker.png" style="width: 50px; height: 50px; position: absolute; top: -35px; left: 50%; transform: translateX(-50%); mix-blend-mode: multiply;">
+                スタート！
             </div>
             <!-- Sparkles -->
-            <div class="sparkle" style="top: 20%; left: 15%; animation-delay: 0s;">✨</div>
-            <div class="sparkle" style="top: 15%; right: 20%; animation-delay: 0.5s;">✨</div>
-            <div class="sparkle" style="bottom: 30%; left: 20%; animation-delay: 1s;">✨</div>
-            <div class="sparkle" style="bottom: 25%; right: 15%; animation-delay: 1.5s;">✨</div>
+            <img src="assets/sparkle.png" class="sparkle" style="top: 20%; left: 15%; animation-delay: 0s; width: 35px; mix-blend-mode: multiply;">
+            <img src="assets/sparkle.png" class="sparkle" style="top: 15%; right: 20%; animation-delay: 0.5s; width: 45px; mix-blend-mode: multiply;">
+            <img src="assets/sparkle.png" class="sparkle" style="bottom: 30%; left: 20%; animation-delay: 1s; width: 30px; mix-blend-mode: multiply;">
+            <img src="assets/sparkle.png" class="sparkle" style="bottom: 25%; right: 15%; animation-delay: 1.5s; width: 40px; mix-blend-mode: multiply;">
         </div>
 
         <!-- チュートリアルモーダル -->
