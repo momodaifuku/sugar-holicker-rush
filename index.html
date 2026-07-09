@@ -271,7 +271,7 @@
             <p class="instructions">
                 角砂糖をタップしてスコアを稼ごう！<br>
                 画面外に逃がすとゲームオーバー！<br>
-                ケーキは3Ptボーナス！逃してもOK！(24Pt〜)
+                ケーキは5Ptボーナス！逃してもOK！(24Pt〜)
             </p>
             <div class="btn" id="start-btn">スタート！</div>
         </div>
@@ -501,7 +501,7 @@
             obj.el.remove();
 
             // スコア加算
-            const pts = obj.type === 'cake' ? 3 : 1;
+            const pts = obj.type === 'cake' ? 5 : 1;
             score += pts;
             scoreEl.innerText = score;
 
