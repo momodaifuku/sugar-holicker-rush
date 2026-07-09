@@ -558,6 +558,26 @@
         .tutorial-buttons button.hidden {
             display: none !important;
         }
+        .info-btn {
+            position: absolute;
+            bottom: 20px;
+            right: 20px;
+            font-size: 0.95rem;
+            padding: 10px 20px;
+            background-color: #4fc3f7;
+            color: #fff;
+            box-shadow: 0 4px 0 #0288d1;
+            border-radius: 20px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: transform 0.1s;
+            z-index: 5;
+        }
+        .info-btn:active {
+            transform: scale(0.95);
+            box-shadow: 0 2px 0 #0288d1;
+            bottom: 18px; /* Move down slightly when pressed */
+        }
     </style>
 </head>
 <body>
@@ -579,6 +599,8 @@
                 <img src="assets/cracker.png" style="width: 50px; height: 50px; position: absolute; top: -35px; left: 50%; transform: translateX(-50%);">
                 スタート！
             </div>
+            
+            <div id="how-to-play-btn" class="info-btn">遊び方 📖</div>
             <!-- Sparkles -->
             <img src="assets/sparkle.png" class="sparkle" style="top: 20%; left: 15%; animation-delay: 0s; width: 35px;">
             <img src="assets/sparkle.png" class="sparkle" style="top: 15%; right: 20%; animation-delay: 0.5s; width: 45px;">
@@ -682,6 +704,13 @@
         // チュートリアルロジック
         let currentTutPage = 1;
         const startBtn = document.getElementById('start-btn');
+        const howToPlayBtn = document.getElementById('how-to-play-btn');
+
+        howToPlayBtn.addEventListener('pointerdown', (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            showTutorial();
+        });
         
         startBtn.addEventListener('pointerdown', (e) => {
             e.preventDefault();
