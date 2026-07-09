@@ -181,19 +181,22 @@
 
         /* 8. 特別演出: 79Pt達成のメッセージ */
         #special-message {
-            position: absolute;
-            top: 30%;
-            left: 0;
-            width: 100%;
+            width: 90%;
+            max-width: 400px;
             text-align: center;
-            font-size: 2.5rem;
+            font-size: 2.2rem;
             color: #ff4081;
-            text-shadow: 3px 3px 0 #fff, -3px -3px 0 #fff, 3px -3px 0 #fff, -3px 3px 0 #fff;
+            background: rgba(255, 255, 255, 0.95);
+            border: 4px solid #ff4081;
+            border-radius: 20px;
+            padding: 20px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.5);
             z-index: 100;
-            pointer-events: none;
+            pointer-events: auto; /* ボタンをクリック可能にするため */
             font-weight: bold;
             line-height: 1.4;
             animation: popInBounce 1s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards, floatPulsate 2s infinite 1s;
+            margin: 0 auto;
         }
         @keyframes popInBounce {
             0% { transform: scale(0) rotate(-10deg); opacity: 0; }
@@ -669,16 +672,37 @@
                 setTimeout(() => {
                     present.remove();
                     
-                    // 祝福メッセージの表示
+                    // 祝福メッセージとボタンの表示
                     const msg = document.createElement('div');
                     msg.id = 'special-message';
-                    msg.innerHTML = "🎉 Happy Birthday<br>莉華ちゃん！ 🎉<br><span style='font-size:1.5rem;color:#ffd700'>〜79Pt達成記念〜</span>";
+                    
+                    const text = "🎉 Happy Birthday<br>莉華ちゃん！ 🎉<br><span style='font-size:1.5rem;color:#f39c12'>〜79Pt達成記念〜</span>";
+                    const shareText = encodeURIComponent(`シュガーホリッカー・ラッシュで ${score} Pt達成！\n79Pt以上の特別演出を見たよ！🎉🎂\n`);
+                    const shareUrl = encodeURIComponent("https://sugar-orpin.vercel.app");
+                    const twitterUrl = `https://twitter.com/intent/tweet?text=${shareText}&url=${shareUrl}&hashtags=シュガーホリッカーラッシュ`;
+                    
+                    msg.innerHTML = `
+                        ${text}
+                        <div style="margin-top: 25px; display: flex; flex-direction: column; gap: 15px; align-items: center;">
+                            <a href="${twitterUrl}" target="_blank" style="text-decoration: none; background: #000; color: #fff; padding: 12px 25px; border-radius: 30px; font-size: 1.2rem; display: flex; align-items: center; gap: 10px; font-weight: bold;">
+                                <svg width="24" height="24" fill="currentColor" viewBox="0 0 24 24"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 22.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+                                𝕏でシェア
+                            </a>
+                            <button id="close-special-btn" style="background: none; border: none; color: #888; text-decoration: underline; font-size: 1rem; cursor: pointer; padding: 10px;">✖ 閉じる</button>
+                        </div>
+                    `;
                     
                     // msgを絶対配置から相対配置にして中央に置くため、少しスタイル上書き
                     msg.style.position = 'relative';
                     msg.style.top = '0';
                     
                     overlay.appendChild(msg);
+                    
+                    // 閉じるボタンのイベント
+                    document.getElementById('close-special-btn').addEventListener('pointerdown', (e) => {
+                        e.stopPropagation(); // 親要素への伝播を防ぐ
+                        overlay.remove();
+                    });
                     
                     triggerConfetti(150);
                 }, 250);
