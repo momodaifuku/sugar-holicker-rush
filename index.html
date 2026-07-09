@@ -23,11 +23,39 @@
             touch-action: none; /* ピンチズームやダブルタップズームを防止 */
         }
 
-        /* 2. ゲームコンテナ */
-        #game-container {
-            position: relative;
+        /* 2. アプリ全体のコンテナとヘッダー */
+        #app-container {
+            display: flex;
+            flex-direction: column;
             width: 100%;
             height: 100%;
+        }
+        #header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 20px;
+            height: 60px;
+            background-color: #fff;
+            border-bottom: 3px solid #ff4081;
+            flex-shrink: 0;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            z-index: 20;
+        }
+        .header-score {
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: #ff4081;
+        }
+        .header-score span {
+            font-size: 1.5rem;
+        }
+
+        /* 2.5 ゲームコンテナ */
+        #game-container {
+            position: relative;
+            flex-grow: 1;
+            width: 100%;
             background: radial-gradient(circle at center, #fff0f5 0%, #ffb7c5 100%);
             overflow: hidden;
         }
@@ -121,21 +149,7 @@
             box-shadow: 0 0px 0 #c2185b, 0 2px 5px rgba(0,0,0,0.2);
         }
 
-        /* 5. ゲーム内UI */
-        #score-display {
-            position: absolute;
-            top: 20px;
-            right: 20px;
-            font-size: 1.8rem;
-            font-weight: bold;
-            color: #ff4081;
-            background: white;
-            padding: 10px 20px;
-            border-radius: 30px;
-            border: 3px solid #ff4081;
-            z-index: 5;
-            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-        }
+        /* 5. ゲーム内UI (ヘッダーへ移動済のため不要) */
 
         /* 6. 動的オブジェクト (角砂糖とケーキ) */
         .gameObject {
@@ -211,10 +225,14 @@
     </style>
 </head>
 <body>
-    <div id="game-container">
-        <!-- プレイ中のスコア表示 -->
-        <div id="score-display" class="hidden">Sugar Pt: <span id="score">0</span></div>
+    <div id="app-container">
+        <!-- ヘッダー（スコア表示） -->
+        <div id="header">
+            <div class="header-score">Best: <span id="best-score">0</span> Pt</div>
+            <div class="header-score">Sugar: <span id="score">0</span> Pt</div>
+        </div>
         
+        <div id="game-container">
         <!-- スタート画面 -->
         <div id="start-screen" class="screen">
             <h1>シュガーホリッカー<br>ラッシュ</h1>
@@ -234,6 +252,7 @@
             <h3 id="title-display"></h3>
             <div class="btn" id="retry-btn">もう一度遊ぶ</div>
         </div>
+        </div>
     </div>
 
     <script>
@@ -251,19 +270,23 @@
 
         // --- DOM要素の取得 ---
         const container = document.getElementById('game-container');
-        const scoreDisplay = document.getElementById('score-display');
         const scoreEl = document.getElementById('score');
+        const bestScoreEl = document.getElementById('best-score');
         const startScreen = document.getElementById('start-screen');
         const gameOverScreen = document.getElementById('game-over-screen');
         const finalScoreEl = document.getElementById('final-score');
         const titleDisplay = document.getElementById('title-display');
 
+        // --- ベストスコアの読み込み ---
+        let bestScore = parseInt(localStorage.getItem('sugarHolickerBest')) || 0;
+        bestScoreEl.innerText = bestScore;
+
         // --- ウィンドウサイズ管理 ---
         let screenW = window.innerWidth;
         let screenH = window.innerHeight;
         window.addEventListener('resize', () => {
-            screenW = window.innerWidth;
-            screenH = window.innerHeight;
+            screenW = container.clientWidth;
+            screenH = container.clientHeight;
         });
 
         // --- イベントリスナー設定 ---
@@ -281,10 +304,13 @@
                 e.stopPropagation();
             }
             
+            // 画面サイズの再取得（ヘッダー分を引いた正確なサイズ）
+            screenW = container.clientWidth;
+            screenH = container.clientHeight;
+            
             // 画面の切り替え
             startScreen.classList.add('hidden');
             gameOverScreen.classList.add('hidden');
-            scoreDisplay.classList.remove('hidden');
             
             // 既存のオブジェクトやエフェクトを全てクリア
             document.querySelectorAll('.gameObject, .floatingText, .confetti, #special-message').forEach(el => el.remove());
@@ -477,8 +503,14 @@
             // 少し間を置いてからゲームオーバー画面を表示
             setTimeout(() => {
                 gameOverScreen.classList.remove('hidden');
-                scoreDisplay.classList.add('hidden');
                 finalScoreEl.innerText = score;
+                
+                // ベストスコアの更新
+                if (score > bestScore) {
+                    bestScore = score;
+                    localStorage.setItem('sugarHolickerBest', bestScore);
+                    bestScoreEl.innerText = bestScore;
+                }
                 
                 // 称号の判定
                 let title = "";
