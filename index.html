@@ -294,6 +294,83 @@
             0% { transform: scale(1); opacity: 1; }
             100% { transform: scale(2); opacity: 0; }
         }
+
+        /* 12. チュートリアルモーダル */
+        #tutorial-modal {
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            z-index: 200;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        #tutorial-modal.hidden {
+            display: none !important;
+        }
+        .tutorial-content {
+            background: #fff;
+            width: 85%;
+            max-width: 350px;
+            border-radius: 15px;
+            overflow: hidden;
+            border: 4px solid #ff4081;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+            text-align: center;
+            animation: popInBounce 0.5s ease-out forwards;
+        }
+        .tutorial-page {
+            padding: 30px 20px;
+        }
+        .tutorial-page.hidden {
+            display: none !important;
+        }
+        .tut-image {
+            height: 120px;
+            background: #ffe4e1;
+            border-radius: 10px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-bottom: 25px;
+            font-size: 5rem;
+        }
+        .tut-image img {
+            width: 80px;
+            height: 80px;
+            object-fit: contain;
+            animation: floatPulsate 2s infinite;
+        }
+        .tutorial-page p {
+            color: #ff4081;
+            font-size: 1.15rem;
+            font-weight: bold;
+            line-height: 1.6;
+            margin: 0;
+        }
+        .tutorial-buttons {
+            padding: 20px;
+            background: #ffb7c5;
+        }
+        .tutorial-buttons button {
+            background: #ff4081;
+            color: #fff;
+            border: none;
+            padding: 12px 35px;
+            font-size: 1.2rem;
+            font-weight: bold;
+            border-radius: 30px;
+            cursor: pointer;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.2);
+            transition: transform 0.1s;
+        }
+        .tutorial-buttons button:active {
+            transform: scale(0.95);
+            box-shadow: 0 2px 3px rgba(0,0,0,0.2);
+        }
+        .tutorial-buttons button.hidden {
+            display: none !important;
+        }
     </style>
 </head>
 <body>
@@ -309,12 +386,33 @@
         <div id="start-screen" class="screen">
             <h1>シュガーホリッカー<br>ラッシュ</h1>
             <div class="subtitle">〜佐藤莉華 生誕祭〜</div>
-            <p class="instructions">
-                角砂糖をタップしてスコアを稼ごう！<br>
-                画面外に逃がすとゲームオーバー！<br>
-                ケーキは5Ptボーナス！逃してもOK！(24Pt〜)
-            </p>
-            <div class="btn" id="start-btn">スタート！</div>
+            <div class="btn" id="start-btn" style="margin-top: 30px;">スタート！</div>
+        </div>
+
+        <!-- チュートリアルモーダル -->
+        <div id="tutorial-modal" class="hidden">
+            <div class="tutorial-content">
+                <div class="tutorial-page active" id="tut-page-1">
+                    <div class="tut-image">
+                        <img src="assets/sugar.png" alt="sugar">
+                    </div>
+                    <p>画面外から落ちてくる<br>角砂糖をタップしよう！<br>画面下に落とすとゲームオーバー！</p>
+                </div>
+                <div class="tutorial-page hidden" id="tut-page-2">
+                    <div class="tut-image">
+                        <img src="assets/cake.png" alt="cake">
+                    </div>
+                    <p>24ポイントを超えると<br>高得点のケーキ(5Pt)が降ってくる！<br>ケーキは落としてもOK！</p>
+                </div>
+                <div class="tutorial-page hidden" id="tut-page-3">
+                    <div class="tut-image">🎁</div>
+                    <p>ハイスコアを目指そう！<br>79ポイント以上で<br>特殊な演出が見られるかも？！</p>
+                </div>
+                <div class="tutorial-buttons">
+                    <button id="tut-next-btn">次へ</button>
+                    <button id="tut-start-btn" class="hidden">ゲーム開始！</button>
+                </div>
+            </div>
         </div>
 
         <!-- ゲームオーバー画面 -->
@@ -363,8 +461,60 @@
         });
 
         // --- イベントリスナー設定 ---
-        // pointerdownを使って、タッチとマウス両方に対応
-        document.getElementById('start-btn').addEventListener('pointerdown', startGame);
+        // チュートリアルロジック
+        let currentTutPage = 1;
+        const startBtn = document.getElementById('start-btn');
+        
+        startBtn.addEventListener('pointerdown', (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            const hasSeenTutorial = localStorage.getItem('sugarHolickerTutorial');
+            if (!hasSeenTutorial) {
+                showTutorial();
+            } else {
+                startGame();
+            }
+        });
+
+        function showTutorial() {
+            currentTutPage = 1;
+            document.getElementById('tutorial-modal').classList.remove('hidden');
+            updateTutorialView();
+        }
+
+        function updateTutorialView() {
+            document.getElementById('tut-page-1').classList.add('hidden');
+            document.getElementById('tut-page-2').classList.add('hidden');
+            document.getElementById('tut-page-3').classList.add('hidden');
+            
+            document.getElementById(`tut-page-${currentTutPage}`).classList.remove('hidden');
+            
+            if (currentTutPage === 3) {
+                document.getElementById('tut-next-btn').classList.add('hidden');
+                document.getElementById('tut-start-btn').classList.remove('hidden');
+            } else {
+                document.getElementById('tut-next-btn').classList.remove('hidden');
+                document.getElementById('tut-start-btn').classList.add('hidden');
+            }
+        }
+
+        document.getElementById('tut-next-btn').addEventListener('pointerdown', (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            if (currentTutPage < 3) {
+                currentTutPage++;
+                updateTutorialView();
+            }
+        });
+
+        document.getElementById('tut-start-btn').addEventListener('pointerdown', (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            localStorage.setItem('sugarHolickerTutorial', 'true');
+            document.getElementById('tutorial-modal').classList.add('hidden');
+            startGame();
+        });
+
         document.getElementById('retry-btn').addEventListener('pointerdown', startGame);
 
         // コンテナ上のデフォルトスクロール等をキャンセル
