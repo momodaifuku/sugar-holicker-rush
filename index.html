@@ -253,6 +253,44 @@
         @keyframes fall {
             to { transform: translateY(120vh) rotate(720deg); }
         }
+
+        /* 11. 79Pt リザルト特別演出 */
+        .dim-overlay {
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0, 0, 0, 0.75);
+            z-index: 90;
+            animation: overlayFadeIn 1s forwards;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        .present-box {
+            font-size: 6rem;
+            animation: dropShake 1.5s ease-in-out forwards;
+            transform-origin: center bottom;
+        }
+        @keyframes overlayFadeIn {
+            0% { opacity: 0; }
+            100% { opacity: 1; }
+        }
+        @keyframes dropShake {
+            0% { transform: translateY(-300px) scale(1); opacity: 0; }
+            40% { transform: translateY(0) scale(1); opacity: 1; }
+            50% { transform: translateY(0) scale(1.1) rotate(-10deg); }
+            60% { transform: translateY(0) scale(1.1) rotate(10deg); }
+            70% { transform: translateY(0) scale(1.1) rotate(-10deg); }
+            80% { transform: translateY(0) scale(1.1) rotate(10deg); }
+            90% { transform: translateY(0) scale(1.1) rotate(0deg); }
+            100% { transform: translateY(0) scale(1); opacity: 1; }
+        }
+        .present-explode {
+            animation: explodeBox 0.3s forwards;
+        }
+        @keyframes explodeBox {
+            0% { transform: scale(1); opacity: 1; }
+            100% { transform: scale(2); opacity: 0; }
+        }
     </style>
 </head>
 <body>
@@ -346,7 +384,7 @@
             container.classList.remove('birthday-mode');
             
             // 既存のオブジェクトやエフェクトを全てクリア
-            document.querySelectorAll('.gameObject, .tapParticle, .confetti, #special-message, .birthday-banner').forEach(el => el.remove());
+            document.querySelectorAll('.gameObject, .tapParticle, .confetti, #special-message, .birthday-banner, .dim-overlay').forEach(el => el.remove());
             
             // 変数の初期化
             score = 0;
@@ -407,8 +445,15 @@
             if (!isPlaying) return;
             spawnObject();
             
-            // 10ポイントごとに速度と頻度を上げる (レベル)
-            let level = Math.floor(score / 10);
+            // 難易度調整: 60Ptで一旦ストップ、100Ptから再開
+            let level = 0;
+            if (score < 60) {
+                level = Math.floor(score / 10);
+            } else if (score < 100) {
+                level = 6;
+            } else {
+                level = 6 + Math.floor((score - 90) / 10);
+            }
             // 最小間隔は300msに制限
             let currentSpawnRate = Math.max(300, baseSpawnRate - (level * 100));
             
@@ -471,8 +516,15 @@
             // 目標地点への角度を計算
             const angle = Math.atan2(targetY - y, targetX - x);
 
-            // 10ポイントごとに速度を上げる
-            let level = Math.floor(score / 10);
+            // 難易度調整: 60Ptで一旦ストップ、100Ptから再開
+            let level = 0;
+            if (score < 60) {
+                level = Math.floor(score / 10);
+            } else if (score < 100) {
+                level = 6;
+            } else {
+                level = 6 + Math.floor((score - 90) / 10);
+            }
             let currentSpeed = baseSpeed + (level * 0.8);
             // 速度に多少のばらつきを持たせる (0.8倍〜1.2倍)
             currentSpeed *= (0.8 + Math.random() * 0.4);
@@ -599,13 +651,38 @@
         function trigger79Effect() {
             hasSeen79Effect = true;
             
-            // 祝福メッセージの表示
-            const msg = document.createElement('div');
-            msg.id = 'special-message';
-            msg.innerHTML = "🎉 Happy Birthday<br>莉華ちゃん！ 🎉";
-            container.appendChild(msg);
+            // 暗転オーバーレイ
+            const overlay = document.createElement('div');
+            overlay.className = 'dim-overlay';
+            container.appendChild(overlay);
             
-            triggerConfetti(120);
+            // プレゼントボックス
+            const present = document.createElement('div');
+            present.className = 'present-box';
+            present.innerText = '🎁';
+            overlay.appendChild(present);
+            
+            // 1.5秒後にプレゼントが開く
+            setTimeout(() => {
+                present.classList.add('present-explode');
+                
+                setTimeout(() => {
+                    present.remove();
+                    
+                    // 祝福メッセージの表示
+                    const msg = document.createElement('div');
+                    msg.id = 'special-message';
+                    msg.innerHTML = "🎉 Happy Birthday<br>莉華ちゃん！ 🎉<br><span style='font-size:1.5rem;color:#ffd700'>〜79Pt達成記念〜</span>";
+                    
+                    // msgを絶対配置から相対配置にして中央に置くため、少しスタイル上書き
+                    msg.style.position = 'relative';
+                    msg.style.top = '0';
+                    
+                    overlay.appendChild(msg);
+                    
+                    triggerConfetti(150);
+                }, 250);
+            }, 1500);
         }
 
         // --- 紙吹雪の生成 ---
