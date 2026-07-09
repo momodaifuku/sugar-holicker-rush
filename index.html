@@ -85,10 +85,10 @@
             color: #ff4081; /* アクセントピンク */
             text-shadow: 3px 3px 0 #fff, -1px -1px 0 #fff, 1px -1px 0 #fff, -1px 1px 0 #fff, 1px 1px 0 #fff;
             text-align: center;
-            font-size: 2.5rem;
-            margin-bottom: 10px;
+            font-size: 2.8rem;
+            margin-bottom: 15px;
             padding: 0 10px;
-            line-height: 1.2;
+            line-height: 1.3;
         }
         .subtitle {
             font-size: 1.2rem;
@@ -116,18 +116,20 @@
         h2 {
             color: #ff4081;
             text-shadow: 2px 2px 0 #fff;
-            font-size: 2rem;
-            margin: 10px 0;
+            font-size: 1.8rem;
+            margin: 15px 0;
+            line-height: 1.4;
         }
         h3#title-display {
             color: #fff;
             background: #ff4081;
-            padding: 10px 25px;
+            padding: 12px 25px;
             border-radius: 30px;
-            font-size: 1.5rem;
-            margin-bottom: 30px;
+            font-size: 1.3rem;
+            margin-bottom: 35px;
             border: 3px solid #fff;
             box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+            line-height: 1.4;
         }
 
         .btn {
@@ -348,6 +350,27 @@
             line-height: 1.6;
             margin: 0;
         }
+        .tut-text {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            align-items: center;
+        }
+        .tut-main {
+            color: #ff4081;
+            font-size: 1.15rem;
+            font-weight: bold;
+            line-height: 1.5;
+            margin: 0;
+            text-shadow: 1px 1px 0 #fff;
+        }
+        .tut-sub {
+            color: #666;
+            font-size: 0.95rem;
+            line-height: 1.5;
+            margin: 0;
+            font-weight: bold;
+        }
         .tutorial-buttons {
             padding: 20px;
             background: #ffb7c5;
@@ -396,17 +419,26 @@
                     <div class="tut-image">
                         <img src="assets/sugar.png" alt="sugar">
                     </div>
-                    <p>画面外から落ちてくる<br>角砂糖をタップしよう！<br>画面下に落とすとゲームオーバー！</p>
+                    <div class="tut-text">
+                        <p class="tut-main">画面上から落ちてくる<br>角砂糖をタップしよう！</p>
+                        <p class="tut-sub">画面下に落としてしまうと<br>ゲームオーバーになるよ！</p>
+                    </div>
                 </div>
                 <div class="tutorial-page hidden" id="tut-page-2">
                     <div class="tut-image">
                         <img src="assets/cake.png" alt="cake">
                     </div>
-                    <p>24ポイントを超えると<br>高得点のケーキ(5Pt)が降ってくる！<br>ケーキは落としてもOK！</p>
+                    <div class="tut-text">
+                        <p class="tut-main">24ポイントを超えると<br>高得点のケーキ(5Pt)が登場！</p>
+                        <p class="tut-sub">ケーキは画面下に落としても<br>ゲームオーバーにはならないよ！</p>
+                    </div>
                 </div>
                 <div class="tutorial-page hidden" id="tut-page-3">
-                    <div class="tut-image">🎁</div>
-                    <p>ハイスコアを目指そう！<br>79ポイント以上で<br>特殊な演出が見られるかも？！</p>
+                    <div class="tut-image" style="font-size: 5.5rem;">🎁</div>
+                    <div class="tut-text">
+                        <p class="tut-main">ハイスコアを目指そう！</p>
+                        <p class="tut-sub">79ポイント以上を獲得すると<br>特別な演出が見られるかも…！？</p>
+                    </div>
                 </div>
                 <div class="tutorial-buttons">
                     <button id="tut-next-btn">次へ</button>
