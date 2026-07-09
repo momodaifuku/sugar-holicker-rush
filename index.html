@@ -93,20 +93,16 @@
             transition: opacity 0.3s;
         }
         #game-over-screen {
-            background-image: url('assets/result_bg_pattern.png');
-            background-size: cover;
-            background-position: center;
-            background-color: transparent;
-            backdrop-filter: none;
-            color: #fff;
+            background-color: #ffe4e1; /* 淡いピンク */
+            backdrop-filter: blur(5px);
         }
         /* Result Screen Styles */
         .result-header {
             font-family: 'Outfit', sans-serif;
             font-size: 3rem;
             font-weight: 700;
-            color: #fff;
-            text-shadow: 0 2px 4px rgba(0,0,0,0.2);
+            color: #ff4081;
+            text-shadow: 2px 2px 0 #fff, -1px -1px 0 #fff, 1px -1px 0 #fff, -1px 1px 0 #fff, 1px 1px 0 #fff;
             margin: 0 0 20px 0;
             -webkit-text-stroke: 0;
         }
@@ -120,20 +116,21 @@
             font-family: 'Outfit', sans-serif;
             font-size: 5rem;
             font-weight: 700;
-            color: #fff;
-            text-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+            color: #ff4081;
+            text-shadow: 2px 2px 0 #fff;
             line-height: 1;
         }
         .score-label {
             font-family: 'Outfit', sans-serif;
             font-size: 1.1rem;
             letter-spacing: 1px;
-            color: #fff;
+            color: #ff4081;
             margin-top: 5px;
-            text-shadow: 0 2px 4px rgba(0,0,0,0.2);
+            text-shadow: 1px 1px 0 #fff;
         }
         .title-panel {
-            background: rgba(255, 255, 255, 0.2);
+            background: rgba(255, 255, 255, 0.6);
+            border: 2px solid #fff;
             border-radius: 15px;
             padding: 12px 25px;
             margin-bottom: 30px;
@@ -143,7 +140,7 @@
         .title-panel-header {
             font-family: 'Outfit', sans-serif;
             font-size: 0.85rem;
-            color: rgba(255, 255, 255, 0.9);
+            color: #ff4081;
             margin-bottom: 5px;
             text-transform: uppercase;
             letter-spacing: 1px;
@@ -151,34 +148,37 @@
         .title-panel-body {
             font-size: 1.2rem;
             font-weight: bold;
-            color: #fff;
+            color: #d81b60;
         }
-        /* Simple Buttons */
+        /* Jelly Buttons */
         .jelly-btn {
+            border: 1px solid rgba(255, 255, 255, 0.4);
             border-radius: 25px;
             font-weight: bold;
             display: flex;
             align-items: center;
             justify-content: center;
             gap: 8px;
-            transition: transform 0.1s;
+            transition: transform 0.1s, box-shadow 0.1s;
             z-index: 2;
             padding: 12px 35px;
-            font-size: 1.1rem;
+            font-size: 1.2rem;
             cursor: pointer;
         }
         .jelly-btn:active {
             transform: scale(0.95);
         }
         .retry-jelly-btn {
-            background-color: #ff4081;
+            background: linear-gradient(135deg, rgba(255, 64, 129, 0.8) 0%, rgba(216, 27, 96, 0.9) 100%);
+            box-shadow: 0 8px 15px rgba(216, 27, 96, 0.3), inset 0 2px 10px rgba(255, 255, 255, 0.5);
             color: white;
-            box-shadow: 0 4px 0 #c2185b;
+            text-shadow: 0 1px 3px rgba(0,0,0,0.2);
         }
         .home-jelly-btn {
-            background-color: #4fc3f7;
+            background: linear-gradient(135deg, rgba(135, 206, 250, 0.7) 0%, rgba(79, 195, 247, 0.85) 100%);
+            box-shadow: 0 8px 15px rgba(79, 195, 247, 0.3), inset 0 2px 10px rgba(255, 255, 255, 0.6);
             color: white;
-            box-shadow: 0 4px 0 #0288d1;
+            text-shadow: 0 1px 3px rgba(0,0,0,0.2);
             margin-top: 15px;
         }
         .btn-icon {
