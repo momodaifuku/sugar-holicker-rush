@@ -208,6 +208,29 @@
             100% { transform: scale(1) translateY(0); }
         }
 
+        .levelUpText {
+            position: absolute;
+            top: 20%;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 2rem;
+            font-weight: bold;
+            color: #ff4081;
+            text-shadow: 2px 2px 0 #fff, -2px -2px 0 #fff, 2px -2px 0 #fff, -2px 2px 0 #fff;
+            pointer-events: none;
+            z-index: 50;
+            text-align: center;
+            line-height: 1.3;
+            animation: popFade 2.5s ease-in-out forwards;
+        }
+        @keyframes popFade {
+            0% { opacity: 0; transform: translate(-50%, -20px) scale(0.5); }
+            15% { opacity: 1; transform: translate(-50%, 0) scale(1.2); }
+            25% { transform: translate(-50%, 0) scale(1); }
+            80% { opacity: 1; transform: translate(-50%, 0); }
+            100% { opacity: 0; transform: translate(-50%, -20px); }
+        }
+
         /* 9. 紙吹雪 */
         .confetti {
             position: absolute;
@@ -240,7 +263,7 @@
             <p class="instructions">
                 🧊 をタップしてスコアを稼ごう！<br>
                 画面外に逃がすとゲームオーバー！<br>
-                🍰 はボーナス！逃してもセーフ！
+                🍰 は3Ptボーナス！逃してもOK！(24Pt〜)
             </p>
             <div class="btn" id="start-btn">スタート！</div>
         </div>
@@ -263,6 +286,7 @@
         let spawnTimeoutId;
         let objects = [];
         let hasSeen79Effect = false;
+        let hasLeveledUp = false;
         
         // --- 難易度パラメータ ---
         let baseSpawnRate = 1200; // 初期出現間隔 (ms)
@@ -320,6 +344,7 @@
             scoreEl.innerText = score;
             isPlaying = true;
             hasSeen79Effect = false;
+            hasLeveledUp = false;
             objects = [];
             
             // ループ開始
@@ -364,11 +389,6 @@
                 }
             }
 
-            // 79Pt到達時の特別演出チェック
-            if (score >= 79 && !hasSeen79Effect) {
-                trigger79Effect();
-            }
-
             // 次のフレームを要求
             gameLoopId = requestAnimationFrame(gameLoop);
         }
@@ -387,8 +407,8 @@
 
         // --- オブジェクトの生成 ---
         function spawnObject() {
-            // 20%の確率でケーキ、80%で角砂糖
-            const isCake = Math.random() < 0.2;
+            // 24Pt以上なら20%の確率でケーキ
+            const isCake = (score >= 24) ? Math.random() < 0.2 : false;
             const type = isCake ? 'cake' : 'sugar';
             
             const el = document.createElement('div');
@@ -465,13 +485,23 @@
             obj.el.remove();
 
             // スコア加算
-            const pts = obj.type === 'cake' ? 5 : 1;
+            const pts = obj.type === 'cake' ? 3 : 1;
             score += pts;
             scoreEl.innerText = score;
 
+            // 24Ptレベルアップ通知
+            if (score >= 24 && !hasLeveledUp) {
+                hasLeveledUp = true;
+                const levelUpMsg = document.createElement('div');
+                levelUpMsg.className = 'levelUpText';
+                levelUpMsg.innerHTML = "Level Up!<br>🍰ケーキ出現スタート！";
+                container.appendChild(levelUpMsg);
+                setTimeout(() => { levelUpMsg.remove(); }, 2500);
+            }
+
             // ポップアップテキスト演出
             const sugarTexts = ["+1 Sugar!", "莉華ちゃん命！", "おめでとう！", "かわいい！"];
-            const cakeTexts = ["+5 ボーナス！", "Happy Birthday!"];
+            const cakeTexts = ["+3 ボーナス！", "24歳おめでとう!"];
             
             const textPool = obj.type === 'cake' ? cakeTexts : sugarTexts;
             const textMsg = textPool[Math.floor(Math.random() * textPool.length)];
