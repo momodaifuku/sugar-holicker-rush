@@ -874,7 +874,18 @@
                     const msg = document.createElement('div');
                     msg.id = 'special-message';
                     
-                    const text = "🎉 Happy Birthday<br>莉華ちゃん！ 🎉<br><span style='font-size:1.5rem;color:#f39c12'>〜79Pt達成記念〜</span>";
+                    const text = `
+                        <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 15px;">
+                            <span style="font-size: 2.2rem; flex-shrink: 0;">🎉</span>
+                            <div style="text-align: center; line-height: 1.4; flex-grow: 1; font-size: 1.8rem; margin: 0 5px;">
+                                Happy Birthday<br>莉華ちゃん！
+                            </div>
+                            <span style="font-size: 2.2rem; flex-shrink: 0;">🎉</span>
+                        </div>
+                        <div style="font-size:1.3rem; color:#f39c12; text-align: center; margin-top: 10px;">
+                            〜79Pt達成記念〜
+                        </div>
+                    `;
                     const shareText = encodeURIComponent(`シュガークリッカー・ラッシュで ${score} Pt達成！\n79Pt以上の特別演出を見たよ！🎉🎂\n`);
                     const shareUrl = encodeURIComponent("https://sugar-orpin.vercel.app");
                     const twitterUrl = `https://twitter.com/intent/tweet?text=${shareText}&url=${shareUrl}&hashtags=シュガークリッカーラッシュ,佐藤莉華生誕祭2026`;
