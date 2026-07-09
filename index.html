@@ -163,22 +163,20 @@
             padding: 10px;
         }
 
-        /* 7. タップ時のポップアップテキスト */
-        .floatingText {
+        /* 7. タップ時のパーティクル演出 */
+        .tapParticle {
             position: absolute;
-            font-size: 1.5rem;
-            font-weight: bold;
-            color: #ff4081;
-            text-shadow: 2px 2px 0 #fff, -1px -1px 0 #fff, 1px -1px 0 #fff, -1px 1px 0 #fff;
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
             pointer-events: none;
             z-index: 6;
             transform: translate(-50%, -50%);
-            animation: floatUp 0.8s ease-out forwards;
+            animation: particleBurst 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
         }
-        @keyframes floatUp {
-            0% { transform: translate(-50%, -50%) scale(0.5); opacity: 1; }
-            50% { transform: translate(-50%, -100px) scale(1.2); opacity: 1; }
-            100% { transform: translate(-50%, -150px) scale(1); opacity: 0; }
+        @keyframes particleBurst {
+            0% { transform: translate(-50%, -50%) scale(1); opacity: 1; }
+            100% { transform: translate(calc(-50% + var(--tx)), calc(-50% + var(--ty))) scale(0); opacity: 0; }
         }
 
         /* 8. 特別演出: 79Pt達成のメッセージ */
@@ -289,8 +287,8 @@
         let hasLeveledUp = false;
         
         // --- 難易度パラメータ ---
-        let baseSpawnRate = 1200; // 初期出現間隔 (ms)
-        let baseSpeed = 2;        // 初期移動速度
+        let baseSpawnRate = 800;  // 初期出現間隔 (ms) を早く
+        let baseSpeed = 3;        // 初期移動速度 を早く
 
         // --- DOM要素の取得 ---
         const container = document.getElementById('game-container');
@@ -337,7 +335,7 @@
             gameOverScreen.classList.add('hidden');
             
             // 既存のオブジェクトやエフェクトを全てクリア
-            document.querySelectorAll('.gameObject, .floatingText, .confetti, #special-message').forEach(el => el.remove());
+            document.querySelectorAll('.gameObject, .tapParticle, .confetti, #special-message').forEach(el => el.remove());
             
             // 変数の初期化
             score = 0;
@@ -398,9 +396,10 @@
             if (!isPlaying) return;
             spawnObject();
             
-            // スコアに応じて出現間隔を短くする（難易度上昇）
-            // 最小間隔は400msに制限
-            let currentSpawnRate = Math.max(400, baseSpawnRate - (score * 12));
+            // 10ポイントごとに速度と頻度を上げる (レベル)
+            let level = Math.floor(score / 10);
+            // 最小間隔は300msに制限
+            let currentSpawnRate = Math.max(300, baseSpawnRate - (level * 100));
             
             spawnTimeoutId = setTimeout(scheduleSpawn, currentSpawnRate);
         }
@@ -456,8 +455,9 @@
             // 目標地点への角度を計算
             const angle = Math.atan2(targetY - y, targetX - x);
 
-            // スコアに応じて速度を上げる
-            let currentSpeed = baseSpeed + (score * 0.04);
+            // 10ポイントごとに速度を上げる
+            let level = Math.floor(score / 10);
+            let currentSpeed = baseSpeed + (level * 0.8);
             // 速度に多少のばらつきを持たせる (0.8倍〜1.2倍)
             currentSpeed *= (0.8 + Math.random() * 0.4);
 
@@ -499,22 +499,36 @@
                 setTimeout(() => { levelUpMsg.remove(); }, 2500);
             }
 
-            // ポップアップテキスト演出
-            const sugarTexts = ["+1 Sugar!", "莉華ちゃん命！", "おめでとう！", "かわいい！"];
-            const cakeTexts = ["+3 ボーナス！", "24歳おめでとう!"];
+            // クラッカー風のパーティクル演出
+            createTapParticles(tapX, tapY, obj.type);
+        }
+
+        // --- パーティクル生成 ---
+        function createTapParticles(x, y, type) {
+            const particleCount = type === 'cake' ? 12 : 6;
+            const colors = type === 'cake' ? ['#ff4081', '#ffd700', '#ffffff', '#ffb7c5'] : ['#ffb7c5', '#ffffff'];
             
-            const textPool = obj.type === 'cake' ? cakeTexts : sugarTexts;
-            const textMsg = textPool[Math.floor(Math.random() * textPool.length)];
-            
-            const floating = document.createElement('div');
-            floating.className = 'floatingText';
-            floating.innerText = textMsg;
-            floating.style.left = tapX + 'px';
-            floating.style.top = tapY + 'px';
-            container.appendChild(floating);
-            
-            // アニメーション完了後に削除
-            setTimeout(() => { floating.remove(); }, 800);
+            for (let i = 0; i < particleCount; i++) {
+                const p = document.createElement('div');
+                p.className = 'tapParticle';
+                p.style.left = x + 'px';
+                p.style.top = y + 'px';
+                p.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+                
+                // 飛ぶ角度と距離をランダムに
+                const angle = Math.random() * Math.PI * 2;
+                const distance = Math.random() * 50 + 20;
+                const tx = Math.cos(angle) * distance;
+                const ty = Math.sin(angle) * distance;
+                
+                p.style.setProperty('--tx', `${tx}px`);
+                p.style.setProperty('--ty', `${ty}px`);
+                
+                container.appendChild(p);
+                
+                // アニメーション完了後に削除
+                setTimeout(() => { p.remove(); }, 500);
+            }
         }
 
         // --- ゲームオーバー処理 ---
