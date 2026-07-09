@@ -679,17 +679,17 @@
                     const text = "🎉 Happy Birthday<br>莉華ちゃん！ 🎉<br><span style='font-size:1.5rem;color:#f39c12'>〜79Pt達成記念〜</span>";
                     const shareText = encodeURIComponent(`シュガーホリッカー・ラッシュで ${score} Pt達成！\n79Pt以上の特別演出を見たよ！🎉🎂\n`);
                     const shareUrl = encodeURIComponent("https://sugar-orpin.vercel.app");
-                    const twitterUrl = `https://twitter.com/intent/tweet?text=${shareText}&url=${shareUrl}&hashtags=シュガーホリッカーラッシュ`;
+                    const twitterUrl = `https://twitter.com/intent/tweet?text=${shareText}&url=${shareUrl}&hashtags=シュガーホリッカーラッシュ,佐藤莉華生誕祭2026`;
                     
                     msg.innerHTML = `
                         ${text}
-                        <div style="margin-top: 25px; display: flex; flex-direction: column; gap: 15px; align-items: center;">
-                            <a href="${twitterUrl}" target="_blank" style="text-decoration: none; background: #000; color: #fff; padding: 12px 25px; border-radius: 30px; font-size: 1.2rem; display: flex; align-items: center; gap: 10px; font-weight: bold;">
-                                <svg width="24" height="24" fill="currentColor" viewBox="0 0 24 24"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 22.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
-                                𝕏でシェア
-                            </a>
-                            <button id="close-special-btn" style="background: none; border: none; color: #888; text-decoration: underline; font-size: 1rem; cursor: pointer; padding: 10px;">✖ 閉じる</button>
+                        <div style="margin-top: 20px;">
+                            <button id="close-special-btn" style="background: none; border: none; color: #888; text-decoration: underline; font-size: 1.1rem; cursor: pointer; padding: 10px;">✖ 閉じる</button>
                         </div>
+                        <a href="${twitterUrl}" target="_blank" style="position: absolute; bottom: 15px; right: 15px; text-decoration: none; background: #000; color: #fff; padding: 8px 14px; border-radius: 20px; font-size: 0.9rem; display: flex; align-items: center; gap: 6px; font-weight: bold; box-shadow: 0 2px 5px rgba(0,0,0,0.3);">
+                            <svg width="14" height="14" fill="currentColor" viewBox="0 0 24 24"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 22.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+                            シェア
+                        </a>
                     `;
                     
                     // msgを絶対配置から相対配置にして中央に置くため、少しスタイル上書き
