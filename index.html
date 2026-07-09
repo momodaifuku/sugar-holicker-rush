@@ -65,7 +65,8 @@
             top: 0; left: 0; right: 0; bottom: 0;
             background-image: url("assets/bg_pattern.png");
             background-size: 200px;
-            opacity: 0.6;
+            opacity: 0.4;
+            filter: blur(2px);
             pointer-events: none;
             z-index: 0;
         }
@@ -127,7 +128,6 @@
             max-width: 450px;
             pointer-events: none;
             z-index: 1;
-            mix-blend-mode: multiply;
         }
         .subtitle {
             position: relative;
@@ -154,7 +154,6 @@
             top: -25px;
             left: 50%;
             transform: translateX(-50%);
-            mix-blend-mode: multiply;
         }
         p.instructions {
             color: #ff4081;
@@ -482,14 +481,14 @@
             <h1>シュガークリッカー<br>ラッシュ</h1>
             <div class="subtitle">〜佐藤莉華 生誕祭〜</div>
             <div class="btn" id="start-btn" style="margin-top: 35px;">
-                <img src="assets/cracker.png" style="width: 50px; height: 50px; position: absolute; top: -35px; left: 50%; transform: translateX(-50%); mix-blend-mode: multiply;">
+                <img src="assets/cracker.png" style="width: 50px; height: 50px; position: absolute; top: -35px; left: 50%; transform: translateX(-50%);">
                 スタート！
             </div>
             <!-- Sparkles -->
-            <img src="assets/sparkle.png" class="sparkle" style="top: 20%; left: 15%; animation-delay: 0s; width: 35px; mix-blend-mode: multiply;">
-            <img src="assets/sparkle.png" class="sparkle" style="top: 15%; right: 20%; animation-delay: 0.5s; width: 45px; mix-blend-mode: multiply;">
-            <img src="assets/sparkle.png" class="sparkle" style="bottom: 30%; left: 20%; animation-delay: 1s; width: 30px; mix-blend-mode: multiply;">
-            <img src="assets/sparkle.png" class="sparkle" style="bottom: 25%; right: 15%; animation-delay: 1.5s; width: 40px; mix-blend-mode: multiply;">
+            <img src="assets/sparkle.png" class="sparkle" style="top: 20%; left: 15%; animation-delay: 0s; width: 35px;">
+            <img src="assets/sparkle.png" class="sparkle" style="top: 15%; right: 20%; animation-delay: 0.5s; width: 45px;">
+            <img src="assets/sparkle.png" class="sparkle" style="bottom: 30%; left: 20%; animation-delay: 1s; width: 30px;">
+            <img src="assets/sparkle.png" class="sparkle" style="bottom: 25%; right: 15%; animation-delay: 1.5s; width: 40px;">
         </div>
 
         <!-- チュートリアルモーダル -->
@@ -955,11 +954,11 @@
                     
                     const text = `
                         <div style="display: flex; align-items: center; justify-content: center; margin-bottom: 20px;">
-                            <span style="font-size: 1.8rem; flex-shrink: 0; margin-right: 5px;">🎉</span>
+                            <img src="assets/cracker.png" style="width: 40px; height: 40px; flex-shrink: 0; margin-right: 10px;">
                             <div style="text-align: center; line-height: 1.4; font-size: 1.5rem; white-space: nowrap; font-weight: bold;">
                                 Happy Birthday<br>莉華ちゃん！
                             </div>
-                            <span style="font-size: 1.8rem; flex-shrink: 0; margin-left: 5px;">🎉</span>
+                            <img src="assets/cracker.png" style="width: 40px; height: 40px; flex-shrink: 0; margin-left: 10px; transform: scaleX(-1);">
                         </div>
                         <div style="font-size:1.3rem; color:#f39c12; text-align: center; margin-top: 10px; font-weight: bold;">
                             〜79Pt達成記念〜
