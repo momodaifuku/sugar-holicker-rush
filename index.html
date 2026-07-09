@@ -259,9 +259,9 @@
             <h1>シュガーホリッカー<br>ラッシュ</h1>
             <div class="subtitle">〜佐藤莉華 生誕祭〜</div>
             <p class="instructions">
-                🧊 をタップしてスコアを稼ごう！<br>
+                角砂糖をタップしてスコアを稼ごう！<br>
                 画面外に逃がすとゲームオーバー！<br>
-                🍰 は3Ptボーナス！逃してもOK！(24Pt〜)
+                ケーキは3Ptボーナス！逃してもOK！(24Pt〜)
             </p>
             <div class="btn" id="start-btn">スタート！</div>
         </div>
@@ -412,7 +412,12 @@
             
             const el = document.createElement('div');
             el.className = 'gameObject';
-            el.innerText = isCake ? '🍰' : '🧊';
+            
+            if (isCake) {
+                el.innerHTML = '<img src="assets/cake.png" alt="cake" style="width: 70px; height: 70px; object-fit: contain; pointer-events: none;">';
+            } else {
+                el.innerHTML = '<img src="assets/sugar.png" alt="sugar" style="width: 70px; height: 70px; object-fit: contain; pointer-events: none;">';
+            }
             
             // タップ（クリック）イベント
             el.addEventListener('pointerdown', (e) => {
