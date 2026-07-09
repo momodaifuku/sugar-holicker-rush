@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>シュガーホリッカー・ラッシュ</title>
+    <title>シュガークリッカー・ラッシュ</title>
     <style>
         /* 1. リセットと基本設定 */
         * {
@@ -408,7 +408,7 @@
         <div id="game-container">
         <!-- スタート画面 -->
         <div id="start-screen" class="screen">
-            <h1>シュガーホリッカー<br>ラッシュ</h1>
+            <h1>シュガークリッカー<br>ラッシュ</h1>
             <div class="subtitle">〜佐藤莉華 生誕祭〜</div>
             <div class="btn" id="start-btn" style="margin-top: 30px;">スタート！</div>
         </div>
@@ -812,17 +812,17 @@
                 // ベストスコアの更新
                 if (score > bestScore) {
                     bestScore = score;
-                    localStorage.setItem('sugarHolickerBest', bestScore);
+                    localStorage.setItem('sugarClickerBest', bestScore);
                     bestScoreEl.innerText = bestScore;
                 }
                 
                 // 称号の判定
                 let title = "";
-                if (score <= 10) title = "微糖ホリッカー";
-                else if (score <= 30) title = "中辛ホリッカー";
-                else if (score <= 50) title = "本格シュガーホリッカー";
+                if (score <= 10) title = "微糖クリッカー";
+                else if (score <= 30) title = "中辛クリッカー";
+                else if (score <= 50) title = "本格シュガークリッカー";
                 else if (score <= 78) title = "重度佐藤中毒";
-                else title = "極限の佐藤中毒（神ホリッカー）";
+                else title = "極限の佐藤中毒（神クリッカー）";
                 
                 titleDisplay.innerText = "称号: " + title;
                 
@@ -860,9 +860,9 @@
                     msg.id = 'special-message';
                     
                     const text = "🎉 Happy Birthday<br>莉華ちゃん！ 🎉<br><span style='font-size:1.5rem;color:#f39c12'>〜79Pt達成記念〜</span>";
-                    const shareText = encodeURIComponent(`シュガーホリッカー・ラッシュで ${score} Pt達成！\n79Pt以上の特別演出を見たよ！🎉🎂\n`);
+                    const shareText = encodeURIComponent(`シュガークリッカー・ラッシュで ${score} Pt達成！\n79Pt以上の特別演出を見たよ！🎉🎂\n`);
                     const shareUrl = encodeURIComponent("https://sugar-orpin.vercel.app");
-                    const twitterUrl = `https://twitter.com/intent/tweet?text=${shareText}&url=${shareUrl}&hashtags=シュガーホリッカーラッシュ,佐藤莉華生誕祭2026`;
+                    const twitterUrl = `https://twitter.com/intent/tweet?text=${shareText}&url=${shareUrl}&hashtags=シュガークリッカーラッシュ,佐藤莉華生誕祭2026`;
                     
                     msg.innerHTML = `
                         ${text}
